@@ -1,0 +1,14 @@
+{
+  "minimum-stability": "dev",
+  "require": {
+    "slim/slim": "^3.0",
+    "slim/php-view": "2.2.0",
+    "sc0vu/web3.php": "dev-master",
+    "web3p/ethereum-tx": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "EthTool\\": "ethtool/src/"
+    }
+  }
+}

@@ -31,6 +31,11 @@ echo 'address: ' . $accounts[0] . ' balance: ' . $balance ."\r\n";
 $balance = balanceOf($Contract, $accounts[1]);
 echo 'address: ' . $accounts[1] . ' balance: ' . $balance . "\r\n";
 
+approval($Contract, $accounts[1], $accounts[2], 80);
+
+
+$allowance = allowance($Contract, $accounts[1], $accounts[2]);
+echo 'owner: ' . $accounts[1] . ' spender: ' . $accounts[2] . ' allowance: ' . $allowance ."\r\n";
 
 
 
@@ -50,6 +55,33 @@ function balanceOf($Contract, $owner){
 		return $balance;
 	} else {
 		return $cb->errMsg;
+	}
+}
+
+function allowance($Contract, $owner, $spender){
+	$cb = new Callback();
+	$Contract->call('allowance', $owner, $spender, $cb);
+	if ($cb->result) {
+		$allowance = $cb->result['allowce']->toString();
+		return $allowance;
+	} else {
+		return $cb->errMsg;
+	}
+}
+
+function approval($Contract, $owner, $spender, $value){
+	$cb = new Callback();
+	$opts = array(
+		'from'	=> $owner,
+		'gas'	=> Utils::toHex(2000000, true)
+	);
+	$Contract->send('approval', $spender, $value, $opts, $cb);
+	if ($cb->result) {
+		$txhash = $cb->result;
+		$receipt = waitForReceipt($Contract->eth, $txhash);
+		print_r($receipt);
+	} else {
+		print_r($cb->errMsg);
 	}
 }
 

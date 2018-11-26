@@ -23,7 +23,15 @@ echo 'address: ' . $accounts[0] . ' balance: ' . $balance . "\r\n";
 $balance = balanceOf($Contract, $accounts[1]);
 echo 'address: ' . $accounts[1] . ' balance: ' . $balance . "\r\n";
 
+$balance = balanceOf($Contract, $accounts[2]);
+echo 'address: ' . $accounts[2] . ' balance: ' . $balance . "\r\n";
+
+$balance = balanceOf($Contract, $accounts[3]);
+echo 'address: ' . $accounts[3] . ' balance: ' . $balance . "\r\n";
+
+
 transfer($Contract, $accounts[0], $accounts[1], 100);
+
 
 $balance = balanceOf($Contract, $accounts[0]);
 echo 'address: ' . $accounts[0] . ' balance: ' . $balance ."\r\n";
@@ -31,11 +39,35 @@ echo 'address: ' . $accounts[0] . ' balance: ' . $balance ."\r\n";
 $balance = balanceOf($Contract, $accounts[1]);
 echo 'address: ' . $accounts[1] . ' balance: ' . $balance . "\r\n";
 
+
 approval($Contract, $accounts[1], $accounts[2], 80);
 
 
+$balance = balanceOf($Contract, $accounts[1]);
+echo 'address: ' . $accounts[1] . ' balance: ' . $balance . "\r\n";
+
+$balance = balanceOf($Contract, $accounts[2]);
+echo 'address: ' . $accounts[2] . ' balance: ' . $balance . "\r\n";
+
 $allowance = allowance($Contract, $accounts[1], $accounts[2]);
 echo 'owner: ' . $accounts[1] . ' spender: ' . $accounts[2] . ' allowance: ' . $allowance ."\r\n";
+
+
+transferFrom($Contract, $accounts[2], $accounts[1], $accounts[3], 50);
+
+$balance = balanceOf($Contract, $accounts[1]);
+echo 'address: ' . $accounts[1] . ' balance: ' . $balance . "\r\n";
+
+$balance = balanceOf($Contract, $accounts[2]);
+echo 'address: ' . $accounts[2] . ' balance: ' . $balance . "\r\n";
+
+$balance = balanceOf($Contract, $accounts[3]);
+echo 'address: ' . $accounts[3] . ' balance: ' . $balance . "\r\n";
+
+$allowance = allowance($Contract, $accounts[1], $accounts[2]);
+echo 'owner: ' . $accounts[1] . ' spender: ' . $accounts[2] . ' allowance: ' . $allowance ."\r\n";
+
+
 
 
 
@@ -97,6 +129,22 @@ function transfer($Contract, $init, $_to, $_value){
 		$receipt = waitForReceipt($Contract->eth, $txhash);
 		print_r($receipt);
 	} else{
+		print_r($cb->errMsg);
+	}
+}
+
+function transferFrom($Contract, $init, $from, $to, $value){
+	$cb = new Callback();
+	$opts = array(
+		'from'	=> $init,
+		'gas'	=> Utils::toHex(2000000, true)
+	);
+	$Contract->send('transferFrom', $from, $to, $value, $opts, $cb);
+	if ($cb->result) {
+		$txhash = $cb->result;
+		$receipt = waitForReceipt($Contract->eth, $txhash);
+		print_r($receipt);
+	} else {
 		print_r($cb->errMsg);
 	}
 }
